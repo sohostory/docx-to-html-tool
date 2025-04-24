@@ -6,16 +6,70 @@
   <title>DOCX to HTML Converter</title>
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
   <style>
-    body { font-family: sans-serif; padding: 1rem; max-width: 800px; margin: auto; }
-    #output { white-space: pre-wrap; border: 1px solid #ccc; padding: 1rem; margin-top: 1rem; background: #f9f9f9; }
-    button, input { margin-top: 1rem; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f8;
+      color: #333;
+      padding: 2rem;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: #1f2937;
+    }
+
+    input[type="file"] {
+      padding: 0.5rem;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+
+    button:hover {
+      background-color: #2563eb;
+    }
+
+    #output {
+      margin-top: 1.5rem;
+      background-color: white;
+      padding: 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    #copy-confirm {
+      margin-top: 0.5rem;
+      color: green;
+      font-weight: bold;
+      display: none;
+    }
   </style>
 </head>
 <body>
 
-  <h1>Convert .docx to HTML</h1>
-  <input type="file" id="upload" accept=".docx">
+  <h1>DOCX to HTML Converter</h1>
+  <input type="file" id="upload" accept=".docx" />
   <button onclick="copyHTML()">Copy HTML</button>
+  <div id="copy-confirm">✔ HTML copied to clipboard</div>
 
   <div id="output" contenteditable="true"></div>
 
@@ -26,6 +80,7 @@
         mammoth.convertToHtml({ arrayBuffer: event.target.result })
           .then(function(result) {
             document.getElementById("output").innerText = result.value;
+            document.getElementById("copy-confirm").style.display = "none";
           })
           .catch(console.error);
       };
@@ -36,10 +91,12 @@
       const output = document.getElementById("output");
       const range = document.createRange();
       range.selectNode(output);
-      window.getSelection().removeAllRanges();
-      window.getSelection().addRange(range);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
       document.execCommand("copy");
-      alert("HTML copied to clipboard!");
+      selection.removeAllRanges();
+      document.getElementById("copy-confirm").style.display = "block";
     }
   </script>
 
