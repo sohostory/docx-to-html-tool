@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DOCX to HTML Converter</title>
+  <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; max-width: 800px; margin: auto; }
+    #output { white-space: pre-wrap; border: 1px solid #ccc; padding: 1rem; margin-top: 1rem; background: #f9f9f9; }
+    button, input { margin-top: 1rem; }
+  </style>
+</head>
+<body>
+
+  <h1>Convert .docx to HTML</h1>
+  <input type="file" id="upload" accept=".docx">
+  <button onclick="copyHTML()">Copy HTML</button>
+
+  <div id="output" contenteditable="true"></div>
+
+  <script>
+    document.getElementById("upload").addEventListener("change", function(event) {
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        mammoth.convertToHtml({ arrayBuffer: event.target.result })
+          .then(function(result) {
+            document.getElementById("output").innerText = result.value;
+          })
+          .catch(console.error);
+      };
+      reader.readAsArrayBuffer(event.target.files[0]);
+    });
+
+    function copyHTML() {
+      const output = document.getElementById("output");
+      const range = document.createRange();
+      range.selectNode(output);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      document.execCommand("copy");
+      alert("HTML copied to clipboard!");
+    }
+  </script>
+
+</body>
+</html>
