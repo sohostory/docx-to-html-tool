@@ -44,16 +44,18 @@
       background-color: #2563eb;
     }
 
-    #output {
+    textarea {
       margin-top: 1.5rem;
+      width: 100%;
+      height: 400px;
       background-color: white;
       padding: 1rem;
       border: 1px solid #e5e7eb;
       border-radius: 8px;
+      font-family: monospace;
+      font-size: 0.9rem;
       white-space: pre-wrap;
       overflow-wrap: break-word;
-      max-height: 500px;
-      overflow-y: auto;
     }
 
     #copy-confirm {
@@ -71,15 +73,15 @@
   <button onclick="copyHTML()">Copy HTML</button>
   <div id="copy-confirm">✔ HTML copied to clipboard</div>
 
-  <div id="output" contenteditable="true"></div>
+  <textarea id="output" readonly></textarea>
 
   <script>
     document.getElementById("upload").addEventListener("change", function(event) {
-      var reader = new FileReader();
+      const reader = new FileReader();
       reader.onload = function(event) {
         mammoth.convertToHtml({ arrayBuffer: event.target.result })
           .then(function(result) {
-            document.getElementById("output").innerText = result.value;
+            document.getElementById("output").value = result.value;
             document.getElementById("copy-confirm").style.display = "none";
           })
           .catch(console.error);
@@ -88,14 +90,10 @@
     });
 
     function copyHTML() {
-      const output = document.getElementById("output");
-      const range = document.createRange();
-      range.selectNode(output);
-      const selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(range);
+      const textarea = document.getElementById("output");
+      textarea.select();
+      textarea.setSelectionRange(0, 99999); // For mobile devices
       document.execCommand("copy");
-      selection.removeAllRanges();
       document.getElementById("copy-confirm").style.display = "block";
     }
   </script>
